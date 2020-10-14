@@ -37,7 +37,7 @@ def find_version(fname):
         raise RuntimeError('Cannot find version information')
     return version
 
-__version__ = find_version("bigbuild.py")
+__version__ = find_version("bigbuild/__main__.py")
 
 
 def read(fname):
@@ -71,12 +71,13 @@ setup(
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy'
     ],
-    py_modules=["bigbuild"],
+    packages=["bigbuild"],
     entry_points={
         'console_scripts': [
-            "bigbuild = bigbuild:main"
+            "bigbuild = bigbuild.__main__:main"
         ]
     },
     tests_require=['pytest'],
-    cmdclass={'test': PyTest}
+    cmdclass={'test': PyTest},
+
 )

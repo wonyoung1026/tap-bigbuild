@@ -16,7 +16,12 @@ def test(ctx):
 def clean(ctx):
     run('rm -rf build')
     run('rm -rf dist')
-    run('rm -rf tap-bigbuild.egg-info')
+    run('rm -rf bigbuild.egg-info')
+    run('rm -rf __pycache__')
+    run('rm -rf .pytest_cache')
+    run('rm -rf .eggs')
+
+
     clean_docs(ctx)
     print("Cleaned up.")
 
@@ -52,3 +57,13 @@ def publish(ctx, test=False):
         run('python setup.py register -r test sdist upload -r test')
     else:
         run("python setup.py register sdist upload")
+
+@task
+def build(c, docs=False):
+    c.run("python setup.py build")
+    if docs:
+        c.run("sphinx-build docs docs/_build")
+
+@task
+def install(c):
+    c.run("python setup.py install")
