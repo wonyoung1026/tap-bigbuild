@@ -27,4 +27,4 @@ Requirements
 License
 -------
 
-MIT licensed. See the bundled `LICENSE <https://github.com/wonyoung1026/bigbuild/blob/master/LICENSE>`_ file for more details.
+MIT licensed. See the bundled `LICENSE <https://github.com/wonyoung1026/tap-bigbuild/LICENSE>`_ file for more details.
