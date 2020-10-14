@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-'''bigbuild
+'''
 
 Usage:
+  
   bigbuild ship new <name>...
   bigbuild ship <name> move <x> <y> [--speed=<kn>]
   bigbuild ship shoot <x> <y>
@@ -21,7 +22,7 @@ Options:
 from __future__ import unicode_literals, print_function
 from docopt import docopt
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Won Jung"
 __license__ = "MIT"
 

@@ -47,7 +47,7 @@ def read(fname):
 
 setup(
     name='bigbuild',
-    version="0.1.0",
+    version=__version__,
     description='TAP big build project tool',
     long_description=read("README.rst"),
     author='Won Jung',
