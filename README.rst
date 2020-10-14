@@ -14,16 +14,33 @@ bigbuild
 
 TAP big build project tool
 
-Features
+Dashboard
+--------
+refer to `link <https://kubernetes.io/docs/reference/access-authn-authz/authentication/>`_
+
+- kubectl apply -f bigbuild/kubernetes/dashboard.yaml
+
+- kubectl apply -f bigbuild/kubernetes/dashboard-adminuser.yaml
+
+- kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+- kubectl proxy
+
+- http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
+
+
+Clean dashboard
 --------
 
-* TODO
+- kubectl -n kubernetes-dashboard delete serviceaccount admin-user
+
+- kubectl -n kubernetes-dashboard delete clusterrolebinding admin-user
 
 Requirements
 ------------
 
 - Python >= 2.6 or >= 3.3
-- Kubernetes / Calico, Docker
+- Kubernetes / Weave, Docker
 
 License
 -------
