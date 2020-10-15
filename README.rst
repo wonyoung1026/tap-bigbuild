@@ -36,6 +36,13 @@ Clean dashboard
 
 - kubectl -n kubernetes-dashboard delete clusterrolebinding admin-user
 
+
+Ingress bare metal LB
+----------
+refer to `link <https://kubernetes.github.io/ingress-nginx/deploy/#bare-metal>`_
+
+
+
 Requirements
 ------------
 

@@ -38,10 +38,10 @@ def process_args(args):
         return list_apps(uid=args.get('<user-id>'))
 
     # ------------------------------------
-    # bigbuild scale (up|down) <user-id> <app-id> [-n=<num>]
+    # bigbuild scale <user-id> <app-id> [-r=<num>]
     # ------------------------------------
     if args.get("scale"):
-        return scale_app(inc=args.get("up"), uid=args.get('<user-id>'), aid=args.get('<app-id>'), n=args.get('-n'))
+        return scale_app(uid=args.get('<user-id>'), aid=args.get('<app-id>'), r=args.get('-r'))
 
     if args.get("test"):
         return test_app()
@@ -55,8 +55,9 @@ def get_service_port(uid, aid):
     print(r[1] if r[0] else r)
 
 def describe_app(uid, aid):
-    print(uid)
-    print(aid)
+    namespace = USER_NAMESPACE_PREFIX + uid
+    r = k8utils.get_deployment_description(ns=namespace, name=aid)
+    print(r[1] if r[0] else r)
 
 
 def deploy_app(uid, aid, image, port, replicas):
@@ -79,37 +80,29 @@ def deploy_app(uid, aid, image, port, replicas):
         return
 
     print("[INFO] Creating service")
-    r = k8utils.create_service(
-        name=aid, ns=namespace
-    )
+    r = k8utils.create_service(name=aid, ns=namespace)
     if not r[0]:
         print(r)
         return
     
     print("[INFO] Fetching node port number")
-    r = k8utils.get_service_port(
-        ns=namespace, name=aid
-    )
+    r = k8utils.get_service_port(ns=namespace, name=aid)
     if not r[0]:
         print(r)
         return
     
-    print("Deployed")
+    print("Deployed on port#"+r[1])
 
 def destroy_app(uid, aid):
     namespace=USER_NAMESPACE_PREFIX+uid
     # print("[INFO] Deleting deployment")
-    r = k8utils.delete_deployment(
-        ns=namespace, name=aid
-    )
+    r = k8utils.delete_deployment(ns=namespace, name=aid)
     if not r[0]:
         print(r)
         return
 
     # print("[INFO] Deleting service")
-    r = k8utils.delete_service(
-        ns=namespace, name=aid
-    )
+    r = k8utils.delete_service(ns=namespace, name=aid)
     if not r[0]:
         print(r)
         return
@@ -117,16 +110,21 @@ def destroy_app(uid, aid):
     print("Deleted")
 
 def log_app(uid, aid):
-    pass
-
-def list_apps(uid):
     namespace = USER_NAMESPACE_PREFIX+uid
-    r = k8utils.get_deployments(
-        ns=namespace
-    )
+    r = k8utils.get_deployments(ns=namespace, name=aid)
     
     print(r[1] if r[0] else r)
 
 
-def scale_app(inc, uid, aid, n):
-    pass
+def list_apps(uid):
+    namespace = USER_NAMESPACE_PREFIX+uid
+    r = k8utils.get_deployments(ns=namespace)
+    
+    print(r[1] if r[0] else r)
+
+
+def scale_app(uid, aid, r):
+    namespace = USER_NAMESPACE_PREFIX+uid
+    r = k8utils.scale_replica(ns=namespace, name=aid, replicas=r)
+
+    print(r[1] if r[0] else r)

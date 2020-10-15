@@ -10,7 +10,7 @@ metadata:
   name: {ns}
 EOF
     '''.format(ns=ns)
-    result = run(cmd)
+    result = run(cmd, hide=True, warn=True)
     
     return (
         result.ok, 
@@ -49,7 +49,7 @@ EOF
         image=image, port=port
     )
 
-    result = run(cmd)
+    result = run(cmd, hide=True, warn=True)
     
     return (result.ok, result.stdout if result.ok else result.stderr)
 
@@ -61,7 +61,7 @@ def create_service(ns, name):
 kubectl expose deployment {name} --type=NodePort -n {ns}
     '''.format(name=name, ns=ns)
 
-    result = run(cmd)
+    result = run(cmd, hide=True, warn=True)
     
     return (result.ok, result.stdout if result.ok else result.stderr)
 
@@ -71,7 +71,7 @@ def delete_service(name, ns):
 kubectl delete svc {name} -n {ns}
     '''.format(name=name, ns=ns)
 
-    result = run(cmd)
+    result = run(cmd, hide=True, warn=True)
     
     return (result.ok, result.stdout if result.ok else result.stderr)
 
@@ -80,7 +80,7 @@ def delete_deployment(name, ns):
 kubectl delete deployment {name} -n {ns}
     '''.format(name=name, ns=ns)
     
-    result = run(cmd)
+    result = run(cmd, hide=True, warn=True)
     
     return (result.ok, result.stdout if result.ok else result.stderr)
 
@@ -89,7 +89,7 @@ def delete_namespace(ns):
 kubectl delete namespace {ns}
     '''.format(name=name, ns=ns)
 
-    result = run(cmd)
+    result = run(cmd, hide=True, warn=True)
     
     return (result.ok, result.stdout if result.ok else result.stderr)
 
@@ -102,23 +102,45 @@ kubectl get services {name} -n {ns} -o jsonpath='{{.spec.ports[0].nodePort}}{{"\
 
     '''.format(name=name, ns=ns)
 
-    result = run(cmd)
+    result = run(cmd, hide=True, warn=True)
     
     if not result.ok:
         return (result.ok, result.stderr)
-    # print(result.stdout)
-    # j = json.loads(result.stdout)
-
-    # port = j.get("spec").get("ports")[0].get("nodePort")
+    port = result.stdout
 
     return (True if port else False, port)
 
 def get_deployments(ns):
     cmd = '''
-kubectl get deployments -n {ns} -o json
+kubectl get deployments -n {ns} -o jsonpath='[name, creationTimestamp, replicas(active/total)]{{range .items[*]}}[{{.metadata.name}},{{.metadata.creationTimestamp}}, {{.status.readyReplicas}}/{{.status.availableReplicas}}] {{end}}'
 
     '''.format(ns=ns)
 
-    result = run(cmd)
+    result = run(cmd, hide=True, warn=True)
 
     return (result.ok, result.stdout if result.ok else result.stderr)
+
+
+def scale_replica(ns, name, replicas):
+    cmd = '''
+kubectl scale --replicas={replicas} deployment {name} -n {ns}
+    '''.format(ns=ns, name=name, replicas=replicas)
+
+    result = run(cmd, hide=True, warn=True)
+
+    return (result.ok, result.stdout if result.ok else result.stderr)
+
+def get_deployment_logs(name, ns):
+    cmd = '''
+kubectl logs deployment/{name} -n {ns} --timestamps=true
+    '''.format(ns=ns, name=name)
+
+
+    result = run(cmd, hide=True, warn=True)
+
+    return (result.ok, result.stdout if result.ok else result.stderr)
+
+def get_deployment_description():
+    cmd = '''
+kubectl logs deployment/{name} -n {ns} --timestamps=true
+    '''.format(ns=ns, name=name)

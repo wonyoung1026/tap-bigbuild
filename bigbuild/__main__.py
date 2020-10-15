@@ -7,7 +7,7 @@ Usage:
   bigbuild get port <user-id> <app-id>
   bigbuild (describe|destroy|log) app <user-id> <app-id>
   bigbuild list apps <user-id>
-  bigbuild scale (up|down) <user-id> <app-id> [-n <num>]
+  bigbuild scale <user-id> <app-id> [-r <num>]
   bigbuild test
 
   bigbuild -h | --help
@@ -16,7 +16,6 @@ Usage:
 Options:
   -h --help     Show this screen.
   --version     Show version.
-  -n <num>      Increment/decrement number [default: 1].
   -r <num>      Number of replicas [default: 3].
 '''
 
