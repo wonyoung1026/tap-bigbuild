@@ -1,5 +1,5 @@
 from invoke import run
-import socket
+import json
 
 def set_namespace(ns):
     cmd = '''
@@ -66,11 +66,59 @@ kubectl expose deployment {name} --type=NodePort -n {ns}
     return (result.ok, result.stdout if result.ok else result.stderr)
 
 
-def delete_service():
-    pass
+def delete_service(name, ns):
+    cmd = '''
+kubectl delete svc {name} -n {ns}
+    '''.format(name=name, ns=ns)
 
-def delete_deployment():
-    pass
+    result = run(cmd)
+    
+    return (result.ok, result.stdout if result.ok else result.stderr)
 
-def delete_namespace():
-    pass
+def delete_deployment(name, ns):
+    cmd = '''
+kubectl delete deployment {name} -n {ns}
+    '''.format(name=name, ns=ns)
+    
+    result = run(cmd)
+    
+    return (result.ok, result.stdout if result.ok else result.stderr)
+
+def delete_namespace(ns):
+    cmd = '''
+kubectl delete namespace {ns}
+    '''.format(name=name, ns=ns)
+
+    result = run(cmd)
+    
+    return (result.ok, result.stdout if result.ok else result.stderr)
+
+
+def get_service_port(name, ns):
+    # TODO: change NodePort to ingress
+    # TODO 2: multiple ports
+    cmd = '''
+kubectl get services {name} -n {ns} -o jsonpath='{{.spec.ports[0].nodePort}}{{"\\n"}}'
+
+    '''.format(name=name, ns=ns)
+
+    result = run(cmd)
+    
+    if not result.ok:
+        return (result.ok, result.stderr)
+    # print(result.stdout)
+    # j = json.loads(result.stdout)
+
+    # port = j.get("spec").get("ports")[0].get("nodePort")
+
+    return (True if port else False, port)
+
+def get_deployments(ns):
+    cmd = '''
+kubectl get deployments -n {ns} -o json
+
+    '''.format(ns=ns)
+
+    result = run(cmd)
+
+    return (result.ok, result.stdout if result.ok else result.stderr)

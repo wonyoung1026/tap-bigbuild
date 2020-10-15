@@ -4,9 +4,11 @@
 
 Usage:
   bigbuild deploy app <user-id> <app-id> <image> <port> [-r <num>]
+  bigbuild get port <user-id> <app-id>
   bigbuild (describe|destroy|log) app <user-id> <app-id>
   bigbuild list apps <user-id>
   bigbuild scale (up|down) <user-id> <app-id> [-n <num>]
+  bigbuild test
 
   bigbuild -h | --help
   bigbuild --version
@@ -17,6 +19,8 @@ Options:
   -n <num>      Increment/decrement number [default: 1].
   -r <num>      Number of replicas [default: 3].
 '''
+
+# TODO: accept multiple ports & types when deploying,
 
 from __future__ import unicode_literals, print_function
 from docopt import docopt
@@ -31,61 +35,7 @@ __license__ = "MIT"
 def main():
     '''Main entry point for the bigbuild CLI.'''
     args = docopt(__doc__, version=__version__)
-    print(args)
     commands.process_args(args)
 
 if __name__ == '__main__':
     main()
-
-# cat <<EOF | kubectl apply -f -
-# apiVersion: v1
-# kind: Namespace
-# metadata:
-#   name: user--wonyoung1026
-# EOF
-
-# cat <<EOF | kubectl apply -f -
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: kube-django
-#   namespace: user--wonyoung1026
-#   labels:
-#     app: kube-django
-# spec:
-#   replicas: 3
-#   selector:
-#     matchLabels:
-#       app: kube-django
-#   template:
-#     metadata:
-#       labels:
-#         app: kube-django
-#     spec:
-#       containers:
-#       - name: kube-django
-#         image: wonyoung1026/kube-django
-#         imagePullPolicy: Always
-#         ports:
-#         - containerPort: 8000
-# EOF
-
-# # get free port 
-
-# cat <<EOF | kubectl apply -f -
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: kube-django
-#   labels:
-#     run: kube-django
-#   namespace: user--wonyoung1026
-# spec:
-#   type: NodePort
-#   ports:
-#   - port: 8000
-#     targetPort: 8000
-#     protocol: TCP
-#   selector:
-#     run: kube-django
-# EOF
