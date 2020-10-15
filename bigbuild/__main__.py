@@ -3,9 +3,10 @@
 '''
 
 Usage:
-  bigbuild (describe|deploy|destroy|log) app <user-id> <app-id>
+  bigbuild deploy app <user-id> <app-id> <image> <port> [-r <num>]
+  bigbuild (describe|destroy|log) app <user-id> <app-id>
   bigbuild list apps <user-id>
-  bigbuild scale (up|down) <user-id> <app-id> [-n=<num>]
+  bigbuild scale (up|down) <user-id> <app-id> [-n <num>]
 
   bigbuild -h | --help
   bigbuild --version
@@ -13,13 +14,15 @@ Usage:
 Options:
   -h --help     Show this screen.
   --version     Show version.
-  -n=<num>            Increment/decrement number [default: 1].
+  -n <num>      Increment/decrement number [default: 1].
+  -r <num>      Number of replicas [default: 3].
 '''
 
 from __future__ import unicode_literals, print_function
 from docopt import docopt
 
-from . import commands 
+from . import commands
+
 __version__ = "0.2.0"
 __author__ = "Won Jung"
 __license__ = "MIT"
@@ -28,6 +31,7 @@ __license__ = "MIT"
 def main():
     '''Main entry point for the bigbuild CLI.'''
     args = docopt(__doc__, version=__version__)
+    print(args)
     commands.process_args(args)
 
 if __name__ == '__main__':

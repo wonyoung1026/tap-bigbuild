@@ -18,9 +18,9 @@ Dashboard
 --------
 refer to `link <https://kubernetes.io/docs/reference/access-authn-authz/authentication/>`_
 
-- kubectl apply -f bigbuild/kubernetes/dashboard.yaml
+- kubectl apply -f bigbuild/kubernetes/yaml/dashboard.yaml
 
-- kubectl apply -f bigbuild/kubernetes/dashboard-adminuser.yaml
+- kubectl apply -f bigbuild/kubernetes/yaml/dashboard-adminuser.yaml
 
 - kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
 
