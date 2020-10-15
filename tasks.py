@@ -9,7 +9,7 @@ build_dir = os.path.join(docs_dir, '_build')
 
 @task
 def test(ctx):
-    run('python setup.py test', pty=True)
+    run('python3 setup.py test', pty=True)
 
 
 @task
@@ -54,16 +54,16 @@ def readme(ctx, browse=False):
 def publish(ctx, test=False):
     """Publish to the cheeseshop."""
     if test:
-        run('python setup.py register -r test sdist upload -r test')
+        run('python3 setup.py register -r test sdist upload -r test')
     else:
-        run("python setup.py register sdist upload")
+        run("python3 setup.py register sdist upload")
 
 @task
 def build(c, docs=False):
-    c.run("python setup.py build")
+    c.run("python3 setup.py build")
     if docs:
         c.run("sphinx-build docs docs/_build")
 
 @task
 def install(c):
-    c.run("python setup.py install")
+    c.run("python3 setup.py install")

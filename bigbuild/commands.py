@@ -15,9 +15,11 @@ def process_args(args):
     if args.get("log") and args.get("app"):
         return log_app(uid=args.get('<user-id>'), aid=args.get('<app-id>'))
 
-    if args.get("list") and args.get("apps"):
+    if args.get("list"):
         return list_apps(uid=args.get('<user-id>'), aid=args.get('<app-id>'))
 
+    if args.get("scale"):
+        return scale_app(inc=args.get("up"), uid=args.get('<user-id>'), aid=args.get('<app-id>'), n=args.get('-n'))
 
 def describe_app(uid, aid):
     print(uid)
@@ -35,5 +37,5 @@ def log_app(uid, aid):
 def list_apps(uid):
     pass
 
-def scale_app(uid, aid, n):
+def scale_app(inc, uid, aid, n):
     pass
