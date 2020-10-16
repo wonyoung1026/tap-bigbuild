@@ -69,7 +69,13 @@ def deploy_app(uid, aid, image, port, replicas):
     if not r[0]:
         print(r)
         return
-    
+        
+    print("[INFO] Creating PVC")
+    r = k8utils.create_pvc(name=aid, ns=namespace)
+    if not r[0]:
+        print(r)
+        return
+
     print("[INFO] Creating deployment")
     r = k8utils.create_deployment(
         name=aid, ns=namespace, image=image, 

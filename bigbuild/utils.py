@@ -17,6 +17,31 @@ EOF
         result.stdout if result.ok else result.stderr
     )
 
+def create_pvc(name, ns):
+    cmd='''
+cat <<EOF | kubectl apply --validate=false -f -
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-pvc-{name}
+  namespace: {ns}
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Mi
+
+    '''.format(name=name, ns=ns)
+
+    result = run(cmd, hide=True, warn=True)
+    
+    return (
+        result.ok, 
+        result.stdout if result.ok else result.stderr
+    )
+
 def create_deployment(name, ns, image, port, replicas):
     cmd = '''
 cat <<EOF | kubectl apply --validate=false -f -
@@ -43,6 +68,13 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: {port}
+        volumeMounts:
+        - mountPath: "/tmp"
+          name: bigbuild-nfs-storage
+      volumes:
+      - name: bigbuild-nfs-storage
+        persistentVolumeClaim:
+            claimName: nfs-pvc-{name}
 EOF
     '''.format(
         name=name, ns=ns, replicas=replicas, 
@@ -140,7 +172,11 @@ kubectl logs deployment/{name} -n {ns} --timestamps=true
 
     return (result.ok, result.stdout if result.ok else result.stderr)
 
-def get_deployment_description():
+def get_deployment_description(name, ns):
     cmd = '''
-kubectl logs deployment/{name} -n {ns} --timestamps=true
+kubectl describe deployment/{name} -n {ns}
     '''.format(ns=ns, name=name)
+
+    result = run(cmd, hide=True, warn=True)
+
+    return (result.ok, result.stdout if result.ok else result.stderr)
