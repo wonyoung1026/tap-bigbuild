@@ -42,6 +42,39 @@ spec:
         result.stdout if result.ok else result.stderr
     )
 
+
+def create_pv(name, ns):
+    cmd = '''
+cat <<EOF | kubectl apply --validate=false -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv-{name}
+  namespace: {ns}
+spec:
+  capacity:
+    storage: 100Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Recycle
+  storageClassName: nfs
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:
+    path: /bigbuild/nfsshare
+    server: nfs-server
+
+    '''.format(name=name, ns=ns)
+
+    result = run(cmd, hide=True, warn=True)
+    
+    return (
+        result.ok, 
+        result.stdout if result.ok else result.stderr
+    )
+
 def create_deployment(name, ns, image, port, replicas):
     cmd = '''
 cat <<EOF | kubectl apply --validate=false -f -
@@ -69,8 +102,8 @@ spec:
         ports:
         - containerPort: {port}
         volumeMounts:
-        - mountPath: "/tmp"
-          name: bigbuild-nfs-storage
+        - name: bigbuild-nfs-storage      
+          mountPath: "/tmp"
       volumes:
       - name: bigbuild-nfs-storage
         persistentVolumeClaim:
